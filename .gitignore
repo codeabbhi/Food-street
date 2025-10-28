@@ -1,0 +1,84 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ==================== DEPENDENCIES ====================
+/node_modules
+/.pnp
+.pnp.js
+package-lock.json
+yarn.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==================== ENVIRONMENT VARIABLES ====================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend/.env
+
+# ==================== FIREBASE CREDENTIALS ====================
+serviceAccountKey.json
+firebase-debug.log
+.firebaserc
+
+# ==================== BUILD & PRODUCTION ====================
+/build
+/dist
+.cache/
+.next/
+out/
+
+# ==================== TESTING ====================
+/coverage
+.nyc_output/
+
+# ==================== IDE & EDITOR ====================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.sublime-project
+.sublime-workspace
+*.iml
+*.iws
+*.ipr
+
+# ==================== OS ====================
+.DS_Store
+Thumbs.db
+.AppleDouble
+.LSOverride
+.VolumeIcon.icns
+.TemporaryItems
+.VolumeIcon.icns
+.CFUserTextEncoding
+
+# ==================== LOGS ====================
+logs/
+*.log
+lerna-debug.log*
+
+# ==================== MISC ====================
+.prettierignore
+.eslintignore
+.env.*.local
+config.local.js
+
+# ==================== FRONTEND SPECIFIC ====================
+/public/favicon.ico
+/public/manifest.json
+/public/robots.txt
+
+# ==================== BACKEND SPECIFIC ====================
+backend/node_modules/
+backend/.env
+backend/logs/
+
+# ==================== TEMPORARY FILES ====================
+*.tmp
+*.temp
+.tmp/
+.temp/
