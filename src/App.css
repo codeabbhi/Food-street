@@ -1,5 +1,59 @@
+/* ============ ANIMATED BACKGROUND ============ */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes floatReverse {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(20px); }
+}
+
 .App {
   text-align: center;
+  position: relative;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  min-height: 100vh;
+}
+
+/* Floating particles background effect */
+.App::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255, 99, 71, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(35, 166, 213, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(231, 60, 126, 0.08) 0%, transparent 50%);
+  animation: float 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.App::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle at 70% 20%, rgba(35, 213, 171, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 30% 80%, rgba(238, 119, 82, 0.1) 0%, transparent 50%);
+  animation: floatReverse 10s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .App-logo {
@@ -67,17 +121,23 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 40px;
-  background: #fff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   position: sticky;
   top: 0;
   z-index: 100;
+  animation: slideInDown 0.5s ease;
 }
 
 .logo {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #ff6347;
+  background: linear-gradient(135deg, #e73c7e, #23a6d5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pulse 3s ease-in-out infinite;
 }
 
 .nav-links {
@@ -90,16 +150,36 @@
   text-decoration: none;
   color: #333;
   font-weight: 500;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #e73c7e, #23a6d5);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
 }
 
 .nav-link:hover {
-  color: #ff6347;
+  color: #e73c7e;
+}
+
+.nav-link:hover::after {
+  width: 100%;
 }
 
 .nav-link.active {
-  color: #ff6347;
-  border-bottom: 2px solid #ff6347;
+  background: linear-gradient(135deg, #e73c7e, #23a6d5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  border-bottom: 2px solid #e73c7e;
   padding-bottom: 3px;
 }
 
@@ -113,7 +193,45 @@
   text-align: center;
   padding: 120px 20px;
   border-radius: 0 0 40px 40px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 1s ease;
+}
+
+/* Animated gradient overlay */
+/* .hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    rgba(231, 60, 126, 0.6), 
+    rgba(238, 119, 82, 0.5), 
+    rgba(35, 166, 213, 0.5));
+  background-size: 200% 200%;
+  animation: gradientShift 12s ease infinite;
+  pointer-events: none;
+} */
+
+/* Floating particles effect in hero */
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
+  animation: float 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
 }
 
 .hero-content h1 {
@@ -127,17 +245,78 @@
 }
 
 .hero-btn {
-  background: #ff6347;
+  background: linear-gradient(135deg, #e73c7e, #ee7752);
   color: white;
   padding: 12px 25px;
   border-radius: 30px;
   text-decoration: none;
   font-weight: 600;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(231, 60, 126, 0.4);
+}
+
+.hero-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.hero-btn:hover::before {
+  left: 100%;
 }
 
 .hero-btn:hover {
-  background: #e5533d;
+  background: linear-gradient(135deg, #ee7752, #23a6d5);
+  box-shadow: 0 8px 30px rgba(231, 60, 126, 0.6);
+  transform: translateY(-3px);
+}
+
+.hero-btn:active {
+  box-shadow: 0 4px 15px rgba(231, 60, 126, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Home page container */
+.home-container {
+  background: transparent;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* Shops section heading */
+.shops-section h2 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 10px;
+  position: relative;
+  display: inline-block;
+}
+
+/* Underline animation on heading */
+.shops-section h2::after {
+  content: "";
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 200% 100%;
+  width: 60px;
+  margin: 10px auto 0;
+  border-radius: 2px;
+  animation: gradientSlide 3s ease infinite;
+}
+
+@keyframes gradientSlide {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* SHOPS SECTION */
@@ -146,38 +325,273 @@
   padding: 60px 20px;
 }
 
+.shops-section h2 {
+  animation: slideInDown 0.8s ease;
+  position: relative;
+  display: inline-block;
+}
+
 .shop-grid {
   display: flex;
   justify-content: center;
   gap: 30px;
   flex-wrap: wrap;
   margin-top: 30px;
+  animation: fadeInUp 1s ease;
 }
 
 .shop-card {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+  backdrop-filter: blur(10px);
+  border: 2px solid transparent;
+  border-radius: 15px;
   width: 250px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
   overflow: hidden;
-  transition: transform 0.3s ease;
+  transition: all 0.4s ease;
+  animation: fadeInUp 0.7s ease;
+  position: relative;
+  padding: 0;
+}
+
+.shop-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  padding: 2px;
+  background: linear-gradient(135deg, #e73c7e, #23a6d5, #23d5ab);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
 }
 
 .shop-card:hover {
-  transform: scale(1.05);
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 15px 40px rgba(231, 60, 126, 0.3);
+}
+
+.shop-card:hover::before {
+  opacity: 1;
 }
 
 .shop-card img {
+  /* position: inherit; */
   width: 100%;
-  height: 180px;
+  height: 240px;
   object-fit: cover;
+  transition: transform 0.4s ease;
+  display: block;
+  border-radius: 15px 15px 0 0;
+}
+
+.shop-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  display: block;
+  border-radius: 15px 15px 0 0;
+}
+
+.shop-card:hover .shop-image,
+.shop-card:hover img {
+  transform: scale(1.08);
 }
 
 .shop-card h3 {
   margin: 15px 0;
+  padding: 0 15px 15px;
   color: #333;
+  font-size: 1.1rem;
 }
+
+/* ============ PAGE ANIMATIONS ============ */
+
+/* subtle entrance animation fallback for non-js or mixed support */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(255, 99, 71, 0.3); }
+  50% { box-shadow: 0 0 15px rgba(255, 99, 71, 0.5); }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease both;
+}
+
+.slide-in-down {
+  animation: slideInDown 0.6s ease both;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.6s ease both;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.6s ease both;
+}
+
+.pulse-animation {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.bounce-animation {
+  animation: bounce 1s ease infinite;
+}
+
+/* Tablet breakpoint */
+@media (max-width: 1024px) {
+  .hero { 
+    height: 380px; 
+    padding: 100px 20px; 
+  }
+  
+  .shop-card { 
+    width: 250px;
+    padding: 0;
+  }
+  
+  .shop-image, .shop-card img { 
+    height: 220px;
+    border-radius: 15px 15px 0 0;
+  }
+
+  .shop-card h3 {
+    padding: 0 12px 12px;
+    font-size: 1.05rem;
+  }
+
+  .shop-grid {
+    gap: 25px;
+    padding: 0 15px;
+  }
+}
+
+/* Medium devices (tablets in portrait) */
+@media (max-width: 768px) {
+  .shop-card { 
+    width: 45%;
+    min-width: 240px;
+    max-width: 280px;
+    padding: 0;
+  }
+  
+  .shop-image, .shop-card img { 
+    height: 200px;
+    border-radius: 15px 15px 0 0;
+  }
+
+  .shop-card h3 {
+    padding: 0 10px 12px;
+    font-size: 1rem;
+  }
+
+  .shop-grid {
+    gap: 20px;
+    padding: 0 10px;
+  }
+}
+
+/* Small devices: stack menu/table into cards */
+@media (max-width: 600px) {
+  .hero { 
+    height: 300px; 
+    padding: 70px 14px; 
+  }
+  
+  .hero-content h1 { 
+    font-size: 1.6rem; 
+  }
+  
+  .shop-card { 
+    width: 90%;
+    max-width: 340px;
+    padding: 0;
+    margin: 0 auto;
+  }
+  
+  .shop-image, .shop-card img { 
+    height: 200px;
+    border-radius: 15px 15px 0 0;
+  }
+
+  .shop-card h3 {
+    padding: 0 15px 15px;
+    font-size: 1.05rem;
+  }
+
+  .shop-grid {
+    gap: 20px;
+    padding: 0 15px;
+  }
+
+  /* ensure background behaves well on small devices */
+  .shop-hero { background-attachment: scroll; height: 260px; }
+
+  /* make menu table accessible on small screens (stacked rows)
+     transform table into block rows with label/value layout */
+  .menu-table, .menu-table thead, .menu-table tbody, .menu-table th, .menu-table td, .menu-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .menu-table thead { display: none; }
+
+  .menu-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    padding: 12px 10px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+  }
+
+  .menu-name { font-weight: 600; }
+  .menu-price { text-align: right; color: #ff5a5f; }
+}
+
+
 
 .shop-details {
   text-align: center;
@@ -207,27 +621,196 @@
   font-size: 1.1rem;
 }
 
+/* Shop page hero */
+.shop-hero {
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: white;
+  animation: slideInDown 0.8s ease;
+}
+
+.shop-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  border-radius: 0 0 10px 10px;
+  animation: fadeInUp 0.6s ease;
+}
+
+.shop-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.shop-hero-title {
+  font-size: 3rem;
+  margin: 0 0 8px 0;
+  font-weight: 800;
+  text-shadow: 2px 2px 12px rgba(0,0,0,0.5);
+}
+
+.shop-hero-tagline {
+  font-size: 1.2rem;
+  opacity: 0.95;
+}
+
+.shop-page {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.shop-page::before {
+  content: "";
+  position: fixed;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(231, 60, 126, 0.08) 0%, transparent 50%);
+  animation: float 15s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.shop-content {
+  max-width: 980px;
+  margin: 40px auto;
+  padding: 30px 22px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  animation: fadeInUp 0.8s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.menu-wrap {
+  overflow-x: auto;
+}
+
+.menu-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.05rem;
+  animation: slideInLeft 0.6s ease;
+}
+
+.menu-table thead tr {
+  background: linear-gradient(135deg, #e73c7e, #ee7752, #23a6d5);
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease infinite, slideInDown 0.5s ease;
+  color: white;
+}
+
+.menu-table th, .menu-table td {
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.menu-row {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+  animation: fadeInUp 0.5s ease;
+}
+
+.menu-row:hover {
+  background: linear-gradient(90deg, rgba(231, 60, 126, 0.05), rgba(35, 166, 213, 0.05));
+  transform: translateX(8px);
+  box-shadow: -4px 0 0 0 #e73c7e;
+}
+
+.menu-name {
+  text-align: center;
+  font-weight: 600;
+}
+
+.menu-price {
+  text-align: center;
+  font-weight: 700;
+  background: linear-gradient(135deg, #e73c7e, #23a6d5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Additional info section styling */
+.shop-content + div {
+  animation: slideInUp 0.6s ease both;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .back-btn {
   display: inline-block;
   margin-top: 20px;
   text-decoration: none;
-  color: #ff6347;
+  background: linear-gradient(135deg, #e73c7e, #23a6d5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-weight: 600;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 8px 16px;
+  border: 2px solid transparent;
+  border-radius: 25px;
+}
+
+.back-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 25px;
+  padding: 2px;
+  background: linear-gradient(135deg, #e73c7e, #23a6d5);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.back-btn:hover::before {
+  opacity: 1;
 }
 
 .back-btn:hover {
-  color: #e5533d;
+  transform: translateX(-5px);
 }
 
 .footer {
-  background: #fff;
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+  backdrop-filter: blur(10px);
   text-align: center;
   padding: 20px 0;
-  border-top: 1px solid #ddd;
+  border-top: 3px solid transparent;
+  border-image: linear-gradient(90deg, #e73c7e, #23a6d5, #23d5ab);
+  border-image-slice: 1;
   margin-top: 60px;
   color: #555;
   font-size: 0.95rem;
+  position: relative;
+  z-index: 1;
 }
 .footer p {
   margin: 5px 0;
@@ -237,7 +820,7 @@
 @media (max-width: 768px) {
   /* Navbar */
   .navbar {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     padding: 10px 20px;
   }
@@ -270,11 +853,7 @@
   .shop-grid {
     flex-direction: column;
     align-items: center;
-  }
-
-  .shop-card {
-    width: 90%;
-    max-width: 320px;
+    gap: 20px;
   }
 
   /* Shop details */
