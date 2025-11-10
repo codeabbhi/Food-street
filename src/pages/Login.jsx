@@ -55,8 +55,18 @@ export default function Login() {
               })
             );
 
+            // Notify the app in this window that a user just logged in so UI updates immediately
+            try {
+              window.dispatchEvent(new CustomEvent('user-logged-in', { detail: { uid: user.uid, fullName: userData.fullName, email: userData.email, avatar: userData.avatar } }));
+            } catch (e) {}
+
+            // Set a welcomeOverlay flag so the app can show the fullscreen welcome overlay once
+            try {
+              localStorage.setItem("welcomeOverlay", JSON.stringify({ show: true, name: userData.fullName }));
+              window.dispatchEvent(new CustomEvent('show-welcome', { detail: { name: userData.fullName } }));
+            } catch (e) {}
+
             setLoading(false);
-            alert(`Welcome ${userData.fullName}! 🎉`);
             setEmail("");
             setPassword("");
             navigate("/");

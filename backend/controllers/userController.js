@@ -1,4 +1,4 @@
-const { db } = require("../config/firebase");
+const { db, admin } = require("../config/firebase");
 
 // Get user profile
 exports.getUserProfile = async (req, res) => {
@@ -32,9 +32,32 @@ exports.updateUserProfile = async (req, res) => {
     if (address) updateData.address = address;
     if (avatar) updateData.avatar = avatar;
 
-    updateData.updatedAt = new Date().toISOString();
+    const userRef = db.collection("users").doc(userId);
 
-    await db.collection("users").doc(userId).update(updateData);
+    // Use server timestamps and merge so we create or update safely
+    const userSnap = await userRef.get();
+
+    if (!userSnap.exists) {
+      // Create a new document with createdAt and update fields
+      await userRef.set(
+        {
+          uid: userId,
+          ...updateData,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
+    } else {
+      // Update existing document with new data and updatedAt
+      await userRef.set(
+        {
+          ...updateData,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
+    }
 
     res.status(200).json({
       message: "Profile updated successfully",

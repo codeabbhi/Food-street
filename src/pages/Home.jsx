@@ -95,9 +95,9 @@ export default function Home() {
         <motion.div className="shop-grid" variants={gridVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
           {shops.map((shop, index) => (
             <Link key={shop.id} to={`/shop/${shop.slug}`} className="shop-card" style={{ textDecoration: "none", color: "inherit" }}>
-              <motion.div variants={cardVariants} whileHover={{ scale: 1.03 }} style={{ border: "1px solid #ddd", borderRadius: "10px", width: "250px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)", overflow: "hidden", background: "#fff", cursor: "pointer" }}>
+              <motion.div variants={cardVariants} whileHover={{ scale: 1.03 }} className="shop-inner">
                 <img src={shop.image} alt={shop.name} className="shop-image" />
-                <h3 style={{ margin: "15px 0" }}>{shop.name}</h3>
+                <h3>{shop.name}</h3>
               </motion.div>
             </Link>
           ))}

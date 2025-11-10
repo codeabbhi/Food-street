@@ -1,4 +1,30 @@
 /* ============ ANIMATED BACKGROUND ============ */
+/* Make sizing predictable across browsers */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+/* Theme variables */
+:root {
+  --bg: #ffffff;
+  --card-bg: #ffffff;
+  --text: #222222;
+  --muted: #666666;
+  --primary: #ff6347;
+  --accent: #667eea;
+  --nav-bg: rgba(255,255,255,0.95);
+}
+
+[data-theme="dark"] {
+  --bg: #0b1020;
+  --card-bg: #0f1724;
+  --text: #e6eef8;
+  --muted: #a6b0c0;
+  --primary: #ff8a66;
+  --accent: #9aa8ff;
+  --nav-bg: rgba(8,10,18,0.7);
+}
+
+html, body, .App { background: var(--bg); color: var(--text); transition: background 240ms ease, color 240ms ease; }
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -121,7 +147,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 40px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+  background: var(--nav-bg);
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   position: sticky;
@@ -133,7 +159,7 @@
 .logo {
   font-size: 1.6rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #e73c7e, #23a6d5);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -148,7 +174,7 @@
 
 .nav-link {
   text-decoration: none;
-  color: #333;
+  color: var(--text);
   font-weight: 500;
   transition: all 0.3s ease;
   position: relative;
@@ -199,21 +225,7 @@
   animation: fadeInUp 1s ease;
 }
 
-/* Animated gradient overlay */
-/* .hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, 
-    rgba(231, 60, 126, 0.6), 
-    rgba(238, 119, 82, 0.5), 
-    rgba(35, 166, 213, 0.5));
-  background-size: 200% 200%;
-  animation: gradientShift 12s ease infinite;
-  pointer-events: none;
-} */
 
-/* Floating particles effect in hero */
 .hero::after {
   content: "";
   position: absolute;
@@ -345,7 +357,12 @@
   backdrop-filter: blur(10px);
   border: 2px solid transparent;
   border-radius: 15px;
-  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 0 1 280px; /* flexible card width with shrink/grow */
+  max-width: 340px;
+  width: 100%;
   box-shadow: 0 8px 20px rgba(0,0,0,0.12);
   overflow: hidden;
   transition: all 0.4s ease;
@@ -382,23 +399,26 @@
   opacity: 1;
 }
 
-.shop-card img {
-  /* position: inherit; */
-  width: 100%;
-  height: 240px;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-  display: block;
-  border-radius: 15px 15px 0 0;
-}
-
+.shop-card img,
 .shop-image {
   width: 100%;
-  height: 240px;
+  height: auto;
+  aspect-ratio: 4 / 3; /* keeps consistent image ratio */
   object-fit: cover;
+  object-position: center center;
   transition: transform 0.4s ease;
   display: block;
-  border-radius: 15px 15px 0 0;
+  background-color: #f6f7fa; /* subtle placeholder while loading */
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  /* ensure the image area doesn't show card background seams */
+  min-height: 140px;
+}
+
+/* make sure the top of the image matches the card radius when images render */
+.shop-card img,
+.shop-image {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 
 .shop-card:hover .shop-image,
@@ -407,10 +427,36 @@
 }
 
 .shop-card h3 {
-  margin: 15px 0;
-  padding: 0 15px 15px;
+  margin: 0;
+  padding: 16px 15px 20px;
   color: #333;
   font-size: 1.1rem;
+  text-align: center;
+}
+
+/* Inner white card that sits on the decorative outer card surface
+   This keeps the white background consistent and keeps images aligned */
+.shop-inner {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.shop-inner .shop-image {
+  /* ensure image fills the white card area cleanly */
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  object-position: center center;
+  background-color: #f6f7fa;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
 }
 
 /* ============ PAGE ANIMATIONS ============ */
@@ -486,15 +532,14 @@
     height: 380px; 
     padding: 100px 20px; 
   }
-  
+
   .shop-card { 
-    width: 250px;
-    padding: 0;
+    flex-basis: 260px;
+    max-width: 320px;
   }
   
   .shop-image, .shop-card img { 
-    height: 220px;
-    border-radius: 15px 15px 0 0;
+    aspect-ratio: 4/3;
   }
 
   .shop-card h3 {
@@ -511,15 +556,13 @@
 /* Medium devices (tablets in portrait) */
 @media (max-width: 768px) {
   .shop-card { 
-    width: 45%;
-    min-width: 240px;
-    max-width: 280px;
-    padding: 0;
+    flex-basis: calc(50% - 15px);
+    min-width: 220px;
+    max-width: 320px;
   }
   
   .shop-image, .shop-card img { 
-    height: 200px;
-    border-radius: 15px 15px 0 0;
+    aspect-ratio: 16/10;
   }
 
   .shop-card h3 {
@@ -545,19 +588,17 @@
   }
   
   .shop-card { 
-    width: 90%;
-    max-width: 340px;
-    padding: 0;
+    flex-basis: calc(100% - 30px);
+    max-width: 360px;
     margin: 0 auto;
   }
   
   .shop-image, .shop-card img { 
-    height: 200px;
-    border-radius: 15px 15px 0 0;
+    aspect-ratio: 16/9;
   }
 
   .shop-card h3 {
-    padding: 0 15px 15px;
+    padding: 16px 20px;
     font-size: 1.05rem;
   }
 
@@ -815,6 +856,131 @@
 .footer p {
   margin: 5px 0;
 }
+
+/* Fullscreen welcome overlay */
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 20% 20%, rgba(0,0,0,0.45), rgba(0,0,0,0.6));
+  z-index: 9999;
+  padding: 20px;
+}
+
+.welcome-card {
+  width: 100%;
+  max-width: 860px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border-radius: 18px;
+  padding: 60px 40px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+  backdrop-filter: blur(6px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.welcome-title {
+  font-size: 3.2rem;
+  margin: 0 0 10px 0;
+  letter-spacing: 1px;
+  text-shadow: 0 10px 30px rgba(231,60,126,0.25);
+}
+
+.welcome-name {
+  font-size: 2rem;
+  margin: 6px 0 12px 0;
+  font-weight: 700;
+  color: #ffd27f;
+  text-shadow: 0 6px 20px rgba(255,157,66,0.12);
+}
+
+.welcome-sub {
+  font-size: 1.15rem;
+  margin-bottom: 24px;
+  opacity: 0.95;
+}
+
+.welcome-close {
+  background: linear-gradient(135deg, #e73c7e, #23a6d5);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 28px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(231,60,126,0.28);
+}
+
+@media (max-width: 720px) {
+  .welcome-card { padding: 36px 22px; }
+  .welcome-title { font-size: 2.2rem; }
+  .welcome-name { font-size: 1.4rem; }
+}
+
+/* Decorative background blobs */
+.welcome-bg-blobs { position: absolute; inset: 0; pointer-events: none; z-index: 998; }
+.welcome-bg-blobs .blob { position: absolute; filter: blur(36px); opacity: 0.9; transform: translateZ(0); }
+.welcome-bg-blobs .b1 { width: 420px; height: 420px; left: -8%; top: 6%; background: radial-gradient(circle,#ff9f43 0%, transparent 60%); animation: blobFloat 10s ease-in-out infinite; }
+.welcome-bg-blobs .b2 { width: 360px; height: 360px; right: -6%; top: 10%; background: radial-gradient(circle,#7bd389 0%, transparent 60%); animation: blobFloat 12s ease-in-out infinite reverse; }
+.welcome-bg-blobs .b3 { width: 300px; height: 300px; left: 40%; bottom: -8%; background: radial-gradient(circle,#6ec6ff 0%, transparent 60%); animation: blobFloat 14s ease-in-out infinite; }
+
+@keyframes blobFloat {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-22px) scale(1.03); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Confetti pieces falling */
+.confetti {
+  position: fixed;
+  top: -6%;
+  width: 12px;
+  height: 18px;
+  border-radius: 3px;
+  z-index: 10000;
+  opacity: 0.96;
+  transform-origin: center;
+  animation: confettiFall 2.6s cubic-bezier(.2,.9,.2,1) forwards;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.16);
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(-10vh) rotate(0deg) scale(1); opacity: 1; }
+  60% { opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg) scale(0.9); opacity: 0.88; }
+}
+
+/* Card pop + glow */
+.welcome-card {
+  animation: cardPop 0.7s cubic-bezier(.2,.9,.2,1) both;
+  position: relative;
+  z-index: 10001;
+}
+
+@keyframes cardPop {
+  0% { transform: translateY(18px) scale(.92); opacity: 0; }
+  60% { transform: translateY(-6px) scale(1.02); opacity: 1; }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.welcome-title { text-transform: uppercase; letter-spacing: 2px; background: linear-gradient(90deg,#fff 0%, #ffd27f 60%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+.welcome-title::after { content: ""; display: block; height: 8px; width: 120px; margin: 12px auto 0; border-radius: 6px; background: linear-gradient(90deg,#ffe4b5,#ffd27f); box-shadow: 0 8px 30px rgba(255,178,77,0.12); }
+
+.welcome-name { animation: nameGlow 2.4s ease infinite; }
+@keyframes nameGlow { 0% { text-shadow: 0 6px 16px rgba(255,210,127,0.08); } 50% { text-shadow: 0 14px 40px rgba(255,210,127,0.14); } 100% { text-shadow: 0 6px 16px rgba(255,210,127,0.08); } }
+
+.welcome-close { transform: translateY(6px); transition: transform 200ms ease, box-shadow 200ms ease; }
+.welcome-close:hover { transform: translateY(0); box-shadow: 0 14px 40px rgba(35,166,213,0.18); }
+
+/* ensure overlay covers everything but doesn't block devtools etc */
+.welcome-overlay { -webkit-font-smoothing: antialiased; }
+
+/* Theme toggle button small styles */
+.navbar button[aria-label="Toggle theme"] { outline: none; }
+.navbar button[aria-label="Toggle theme"]:focus { box-shadow: 0 0 0 4px rgba(102,126,234,0.14); }
 
 /* 📱 Mobile & Tablet Responsive Design */
 @media (max-width: 768px) {

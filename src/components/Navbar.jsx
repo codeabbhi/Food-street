@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
-export default function Navbar() {
+export default function Navbar({ theme = "light", toggleTheme = () => {} }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -14,12 +14,32 @@ export default function Navbar() {
     if (user) {
       setLoggedInUser(JSON.parse(user));
     }
+    // Listen for cross-component login/logout events in the same tab
+    const onLogin = (e) => {
+      try {
+        setLoggedInUser(e?.detail || JSON.parse(localStorage.getItem('loggedInUser')));
+      } catch (err) {
+        // fallback
+        setLoggedInUser(JSON.parse(localStorage.getItem('loggedInUser')));
+      }
+    };
+    const onLogout = () => {
+      setLoggedInUser(null);
+    };
+    window.addEventListener('user-logged-in', onLogin);
+    window.addEventListener('user-logged-out', onLogout);
+
+    return () => {
+      window.removeEventListener('user-logged-in', onLogin);
+      window.removeEventListener('user-logged-out', onLogout);
+    };
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");
     setLoggedInUser(null);
     setShowDropdown(false);
+    try { window.dispatchEvent(new Event('user-logged-out')); } catch (e) {}
     navigate("/");
   };
 
@@ -39,7 +59,7 @@ export default function Navbar() {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "15px 40px",
-        background: "#fff",
+        background: "var(--nav-bg)",
         boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
         position: "sticky",
         top: 0,
@@ -48,10 +68,46 @@ export default function Navbar() {
     >
       {/* Logo */}
       <Link to="/" style={{ textDecoration: "none" }}>
-        <div className="logo" style={{ fontSize: "1.6rem", fontWeight: "700", color: "#ff6347" }}>
+        <div className="logo" style={{ fontSize: "1.6rem", fontWeight: "700" }}>
           🍔 FoodStreet
         </div>
       </Link>
+
+      {/* Theme toggle control (sun/moon) - only visible to logged-in users */}
+      {loggedInUser && (
+        <div style={{ marginLeft: 12, marginRight: 8 }}>
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            title={theme === "light" ? "Switch to dark" : "Switch to light"}
+            aria-pressed={theme === "dark"}
+            style={{
+              width: 44,
+              height: 28,
+              borderRadius: 999,
+              border: "1px solid rgba(0,0,0,0.06)",
+              display: "inline-flex",
+              alignItems: "center",
+              padding: 4,
+              background: "var(--card-bg)",
+              cursor: "pointer",
+              transition: "all 220ms ease",
+            }}
+          >
+            <div
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: "50%",
+                background: theme === "light" ? "#ffd166" : "#f1f5f9",
+                marginLeft: theme === "light" ? 2 : 18,
+                transition: "all 300ms ease",
+                boxShadow: theme === "light" ? "0 6px 18px rgba(255,145,0,0.14)" : "0 6px 18px rgba(0,0,0,0.4)",
+              }}
+            />
+          </button>
+        </div>
+      )}
 
       {/* Navigation Links */}
       <ul className="nav-links" style={{ listStyle: "none", display: "flex", gap: "30px" }}>
@@ -61,10 +117,10 @@ export default function Navbar() {
               to={item.path}
               style={{
                 textDecoration: "none",
-                color: location.pathname === item.path ? "#ff6347" : "#333",
+                color: location.pathname === item.path ? "var(--primary)" : "var(--text)",
                 fontWeight: 500,
                 transition: "color 0.3s ease",
-                borderBottom: location.pathname === item.path ? "2px solid #ff6347" : "none",
+                borderBottom: location.pathname === item.path ? `2px solid var(--primary)` : "none",
                 paddingBottom: "3px",
               }}
             >
@@ -171,8 +227,8 @@ export default function Navbar() {
                     position: "absolute",
                     top: "100%",
                     right: 0,
-                    background: "white",
-                    border: "1px solid #ddd",
+                    background: "var(--card-bg)",
+                    border: "1px solid rgba(255,255,255,0.04)",
                     borderRadius: "10px",
                     boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
                     minWidth: "280px",
@@ -195,10 +251,10 @@ export default function Navbar() {
                           }}
                         />
                       )}
-                      <h3 style={{ margin: "10px 0 5px 0", color: "#333" }}>
+                      <h3 style={{ margin: "10px 0 5px 0", color: "var(--text)" }}>
                         {loggedInUser.fullName}
                       </h3>
-                      <p style={{ margin: "0", color: "#666", fontSize: "0.9rem" }}>
+                      <p style={{ margin: "0", color: "var(--muted)", fontSize: "0.9rem" }}>
                         {loggedInUser.email}
                       </p>
                     </div>

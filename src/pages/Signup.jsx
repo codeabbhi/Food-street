@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
-import { auth, db } from "../config/firebase";
+import { auth } from "../config/firebase";
+import { updateUserProfile } from "../services/api";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -58,19 +58,25 @@ export default function Signup() {
 
     setLoading(true);
 
-    // Create user with Firebase Authentication
+    // Create user with Firebase Authentication and send profile to backend
     createUserWithEmailAndPassword(auth, formData.email, formData.password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         const user = userCredential.user;
 
-        // Save additional user data to Firestore
-        return setDoc(doc(db, "users", user.uid), {
-          uid: user.uid,
+        // Get ID token to authenticate backend request
+        const token = await user.getIdToken();
+
+        // Prepare profile payload
+        const payload = {
           fullName: formData.fullName,
           email: formData.email,
-          createdAt: new Date().toISOString(),
           avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.email}`,
-        });
+        };
+
+        // Use central API helper to avoid base-URL mismatches
+        console.log("Calling backend to save profile");
+        const result = await updateUserProfile(payload, token);
+        return result;
       })
       .then(() => {
         setSuccess("✅ Signup successful! Redirecting to login...");
@@ -87,6 +93,7 @@ export default function Signup() {
       })
       .catch((error) => {
         setLoading(false);
+        // Firebase auth errors have a 'code' property; backend errors may not
         if (error.code === "auth/email-already-in-use") {
           setError("This email is already registered! Please login instead.");
         } else if (error.code === "auth/weak-password") {
